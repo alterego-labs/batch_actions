@@ -43,19 +43,20 @@ module BatchActions
       batch_method = options[:batch_method] || options[:action_name] || name
       trigger      = options[:trigger]      || name
       model        = options[:model]        || @model
+      no_block     = options[:no_block]     || false
 
       do_batch_stuff = block || ->(objects) do
         results = objects.map do |object|
           [object, object.send(batch_method)]
         end
         Hash[results]
-      end
+      end unless no_block
 
       @controller_class.class_eval do
         define_method action_name do
           @ids     = params[param_name]
           @objects = instance_exec(model, @ids, &scope)
-          @results = do_batch_stuff.call(@objects)
+          @results = do_batch_stuff.call(@objects) unless no_block
 
           instance_exec(&response)
         end
