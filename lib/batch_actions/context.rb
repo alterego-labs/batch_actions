@@ -56,7 +56,7 @@ module BatchActions
         define_method action_name do
           @ids     = params[param_name]
           @objects = instance_exec(model, @ids, &scope)
-          @results = do_batch_stuff.call(@objects) unless no_block
+          @results = do_batch_stuff.call(@objects, self) unless no_block
 
           instance_exec(&response)
         end
