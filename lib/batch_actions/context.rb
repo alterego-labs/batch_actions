@@ -1,3 +1,5 @@
+require 'vine'
+
 module BatchActions
   class Context
     attr_reader :batch_actions
@@ -54,7 +56,7 @@ module BatchActions
 
       @controller_class.class_eval do
         define_method action_name do
-          @ids     = params[param_name]
+          @ids     = params.access(param_name)
           @objects = instance_exec(model, @ids, &scope)
           @results = instance_exec(@objects, &do_batch_stuff) unless no_block
           instance_exec(&response)
